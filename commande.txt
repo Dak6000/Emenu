@@ -1,0 +1,57 @@
+# Création de l’environnement virtuel
+python -m venv env
+
+# Activation
+env\Scripts\activate
+
+# Installation de Django
+pip install django
+
+# Création d’un projet
+django-admin startproject Emenu
+
+# Lancer le serveur
+cd Emenu
+python manage.py runserver
+
+################################################
+Utilisation de mysql à la place de de Sqlite:
+installation de mysqlclient avec la commande
+>> pip install mysqlclient
+en cas d'erreur installer pymysql avec la commande
+>>pip install pymysql
+#Puis ajouter ceci au début du fichier settings.py
+    "import pymysql
+    pymysql.install_as_MySQLdb()"
+
+Modifier le fichier settings.py avec le code suivant
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'nom_de_ta_base',
+            'USER': 'django_user',
+            'PASSWORD': 'motdepasse',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
+    }
+appliquer les migrations avec les commandes
+>> python manage.py makemigrations
+>> python manage.py migrate
+
+Tester le serveur avec la commande
+>> python manage.py runserver
+
+Créer une application menu dans Emenu avec la commande
+>> python manage.py startapp menu
+
+Ajouter des fichier ou repertoir dans le gitignore
+>> git init
+>> echo env > .gitignore
+>> echo __pycache__ >> .gitignore
+>> echo db.sqlite3 >> .gitignore
+# Vous pouvez ajouter d’autres fichiers et répertoires dans le .gitignore ici
+>> git add .
+>> git status
+>> git commit -m “initial commit”
+

@@ -1,0 +1,81 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.validators import RegexValidator
+
+class CustomUserManager(BaseUserManager):
+    """Gère la création des utilisateurs et superutilisateurs."""
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('L\'email est obligatoire.')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', 'admin')
+
+        if not extra_fields.get('is_staff'):
+            raise ValueError('Superuser must have is_staff=True.')
+        if not extra_fields.get('is_superuser'):
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, password, **extra_fields)
+
+class User(AbstractUser):
+    ROLE_CHOICES = [
+        ('client', 'Client'),
+        ('structure', 'Structure'),
+        ('admin', 'Administrateur'),
+    ]
+
+    STATUS_CHOICES = [
+        ('active', 'Actif'),
+        ('inactive', 'Inactif'),
+        ('suspended', 'Suspendu'),
+    ]
+
+    username = None  # Désactive le champ username (utilisation de l'email)
+    email = models.EmailField(unique=True, max_length=191)
+    telephone = models.CharField(max_length=20, blank=True, null=True)
+    adresse = models.CharField(max_length=255, blank=True, null=True)
+    ville = models.CharField(max_length=100, blank=True, null=True)
+    date_inscription = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='client')
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []  # Ajoute 'first_name', 'last_name' si tu veux les rendre obligatoires
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
+class Structure(models.Model):
+    TYPE_CHOICES = [
+        ('restaurant', 'Restaurant'),
+        ('cafe', 'Café'),
+        ('bar', 'Bar'),
+        ('hotel', 'Hôtel'),
+        ('autre', 'Autre'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='structure')
+    nom = models.CharField(max_length=100)
+    telephone = models.CharField(max_length=20)
+    adresse = models.CharField(max_length=255)
+    ville = models.CharField(max_length=100)
+    heure_ouverture = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    photo = models.ImageField(upload_to='structures/', blank=True, null=True)
+
+    featured = models.BooleanField(default=False, verbose_name="Mettre en avant")
+
+    def __str__(self):
+        return self.nom
