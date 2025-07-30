@@ -1,84 +1,163 @@
-{% extends 'base.html' %}
-
+{% extends 'base_auth.html' %}
 {% block title %}Inscription Utilisateur{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="auth-card card">
-            <div class="card-header bg-primary text-white">
-                <h3 class="card-title mb-0">Inscription Utilisateur</h3>
+<div class="min-vh-100 d-flex align-items-center justify-content-center py-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="auth-card card shadow">
+            <div class="card-header text-center py-3" style="background: var(--bs-secondary)">
+                <h3 class="card-title mb-0" style="color: var(--bs-primary)">
+                    <i class="fas fa-user-plus me-2"></i>Inscription Utilisateur
+                </h3>
             </div>
             <div class="card-body p-4">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {% csrf_token %}
 
-                    <div class="row g-3">
-                        <!-- Colonne gauche -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="{{ form.email.id_for_label }}" class="form-label">Email*</label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.email.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                    <!-- Informations de connexion -->
+                    <div class="mb-4">
+                        <h5 class="mb-3" style="color: var(--bs-primary)"><i class="fas fa-key me-2"></i>Informations de connexion</h5>
 
-                            <div class="mb-3">
-                                <label for="{{ form.password1.id_for_label }}" class="form-label">Mot de passe*</label>
-                                {{ form.password1 }}
-                                {% if form.password1.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.password1.errors.0 }}
-                                    </div>
-                                {% endif %}
-                                <small class="text-muted">{{ form.password1.help_text }}</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="{{ form.password2.id_for_label }}" class="form-label">Confirmation*</label>
-                                {{ form.password2 }}
-                                {% if form.password2.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.password2.errors.0 }}
-                                    </div>
-                                {% endif %}
-                            </div>
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email*
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.email.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
 
-                        <!-- Colonne droite -->
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="{{ form.first_name.id_for_label }}" class="form-label">Prénom*</label>
-                                {{ form.first_name }}
-                            </div>
+                        <div class="mb-3">
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Mot de passe*
+                            </label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <small class="text-muted"><i class="fas fa-info-circle me-2"></i>{{ form.password1.help_text }}</small>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="{{ form.last_name.id_for_label }}" class="form-label">Nom*</label>
-                                {{ form.last_name }}
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="{{ form.telephone.id_for_label }}" class="form-label">Téléphone</label>
-                                {{ form.telephone }}
-                            </div>
+                        <div class="mb-3">
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Confirmation du mot de passe*
+                            </label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 
+                    <!-- Informations personnelles -->
+                    <div class="mb-4">
+                        <h5 class="mb-3" style="color: var(--bs-primary)"><i class="fas fa-user me-2"></i>Informations personnelles</h5>
+
+                        <div class="mb-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                <i class="fas fa-user-tag me-2"></i>Nom*
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.last_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                <i class="fas fa-user me-2"></i>Prénom*
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.first_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.telephone.id_for_label }}" class="form-label">
+                                <i class="fas fa-phone me-2"></i>Téléphone
+                            </label>
+                            {{ form.telephone }}
+                            {% if form.telephone.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.telephone.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.photo.id_for_label }}" class="form-label">
+                                <i class="fas fa-camera me-2"></i>Photo de profil
+                            </label>
+                            {{ form.photo }}
+                            {% if form.photo.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.photo.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Adresse -->
+                    <div class="mb-4">
+                        <h5 class="mb-3" style="color: var(--bs-primary)"><i class="fas fa-map-marker-alt me-2"></i>Adresse</h5>
+
+                        <div class="mb-3">
+                            <label for="{{ form.adresse.id_for_label }}" class="form-label">
+                                <i class="fas fa-home me-2"></i>Adresse
+                            </label>
+                            {{ form.adresse }}
+                            {% if form.adresse.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.adresse.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.ville.id_for_label }}" class="form-label">
+                                <i class="fas fa-city me-2"></i>Ville
+                            </label>
+                            {{ form.ville }}
+                            {% if form.ville.errors %}
+                                <div class="invalid-feedback d-block">
+                                    <i class="fas fa-exclamation-circle me-2"></i>{{ form.ville.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Bouton de soumission -->
                     <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="btn btn-lg" style="color: var(--bs-secondary); background: var(--bs-primary)">
                             <i class="fas fa-user-plus me-2"></i>S'inscrire
                         </button>
                     </div>
 
+                    <!-- Lien vers la connexion -->
                     <div class="text-center mt-3">
-                        <p class="mb-0">Déjà inscrit? <a href="{% url 'accounts:login' %}">Connectez-vous ici</a></p>
+                        <p class="mb-0">
+                            <i class="fas fa-sign-in-alt me-2"></i>Déjà inscrit?
+                            <a href="{% url 'accounts:login' %}" class="text-decoration-none" style="color: var(--bs-primary)">
+                                Connectez-vous ici
+                            </a>
+                        </p>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

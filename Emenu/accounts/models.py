@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
+from django.contrib.auth import get_user_model
 
 class CustomUserManager(BaseUserManager):
     """Gère la création des utilisateurs et superutilisateurs."""
@@ -47,11 +48,16 @@ class User(AbstractUser):
     date_inscription = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='client')
+    photo = models.ImageField(upload_to='users/', blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []  # Ajoute 'first_name', 'last_name' si tu veux les rendre obligatoires
 
     objects = CustomUserManager()
+
+    class Meta:
+        verbose_name = "Utilisateur"
+        verbose_name_plural = "Utilisateurs"
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
@@ -79,3 +85,21 @@ class Structure(models.Model):
 
     def __str__(self):
         return self.nom
+
+
+class UserLoginHistory(models.Model):
+    ACTION_CHOICES = [
+        ('LOGIN', 'Connexion'),
+        ('LOGOUT', 'Déconnexion'),
+        ('FAILED_ATTEMPT', 'Tentative échouée'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='login_history')
+    login_time = models.DateTimeField(auto_now_add=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=255, blank=True)
+    login_success = models.BooleanField(default=True)
+    action = models.CharField(max_length=15, choices=ACTION_CHOICES, default='LOGIN')
+
+    class Meta:
+        ordering = ['-login_time']
