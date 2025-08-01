@@ -1,10 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib import messages
 from .forms import UserLoginForm, UserRegistrationForm, StructureRegistrationForm
 from .models import Structure, User, UserLoginHistory
 from django.utils import timezone
+from .forms import UserUpdateForm, CustomPasswordChangeForm, UserDeleteForm, StructureUpdateForm
 
 
 def login_view(request):
@@ -31,7 +32,12 @@ def login_view(request):
 
                 login(request, user)
                 messages.success(request, f"Bienvenue {user.first_name}!")
-                return redirect('accounts:dashboard')
+
+                # Vérifie si l'utilisateur a une structure associée
+                if hasattr(user, 'structure'):
+                    return redirect('accounts:dashboard')
+                else:
+                    return redirect('accounts:home')  # Remplacez 'home' par le nom de votre URL d'accueil
 
         # Gestion des échecs de connexion (identique)
         email = request.POST.get('username')
@@ -57,10 +63,10 @@ def login_view(request):
 
 def register_user(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-            user.username = user.email  # Pour compatibilité avec Django
+            user.username = user.email
             user.save()
             messages.success(request, "Compte créé avec succès! Vous pouvez maintenant vous connecter.")
             return redirect('accounts:login')
@@ -113,7 +119,7 @@ def home_view(request):
         ],
         'featured_structures': Structure.objects.all()[:4]  # Récupère les 4 premières structures
     }
-    return render(request, 'home.html', context)
+    return render(request, 'Accueil.html', context)
 
 
 def logout_view(request):
@@ -132,3 +138,103 @@ def logout_view(request):
 
     logout(request)
     return redirect('accounts:login')
+
+
+
+
+@login_required
+def profile_view(request):
+    return render(request, 'accounts/profile.html', {'user': request.user})
+
+
+@login_required
+def profile_update(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Votre profil a été mis à jour avec succès!')
+            return redirect('accounts:profile')
+    else:
+        form = UserUpdateForm(instance=request.user)
+
+    return render(request, 'accounts/profile_form.html', {'form': form})
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = CustomPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important pour ne pas déconnecter l'utilisateur
+            messages.success(request, 'Votre mot de passe a été changé avec succès!')
+            return redirect('accounts:profile')
+    else:
+        form = CustomPasswordChangeForm(request.user)
+
+    return render(request, 'accounts/change_password.html', {'form': form})
+
+
+@login_required
+def account_delete(request):
+    if request.method == 'POST':
+        form = UserDeleteForm(request.POST)
+        if form.is_valid():
+            request.user.delete()
+            logout(request)
+            messages.success(request, 'Votre compte a été supprimé avec succès.')
+            return redirect('accounts:home')
+    else:
+        form = UserDeleteForm()
+
+    return render(request, 'accounts/account_delete.html', {'form': form})
+
+
+def list_structures(request):
+    # Récupérer toutes les structures (ou seulement les featured si vous voulez)
+    featured_structures = Structure.objects.all().order_by('-id')  # ou .filter(featured=True)
+
+    # Récupérer les villes et catégories uniques pour les filtres
+    villes = Structure.objects.values_list('ville', flat=True).distinct()
+    categories = Structure.objects.values_list('type', flat=True).distinct()
+
+    context = {
+        'featured_structures': featured_structures,
+        'villes': villes,
+        'categories': categories,
+        'title': 'Nos Structures Partenaires'
+    }
+    return render(request, 'structure.html', context)
+
+
+@login_required
+def structure_detail(request, pk):
+    structure = get_object_or_404(Structure, pk=pk, user=request.user)
+    return render(request, 'accounts/structure_detail.html', {'structure': structure})
+
+
+@login_required
+def structure_update(request, pk):
+    structure = get_object_or_404(Structure, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = StructureUpdateForm(request.POST, request.FILES, instance=structure)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'La structure a été mise à jour avec succès!')
+            return redirect('accounts:structure-detail', pk=structure.pk)
+    else:
+        form = StructureUpdateForm(instance=structure)
+
+    return render(request, 'accounts/structure_form.html', {'form': form, 'structure': structure})
+
+
+@login_required
+def structure_delete(request, pk):
+    structure = get_object_or_404(Structure, pk=pk, user=request.user)
+    if request.method == 'POST':
+        structure.delete()
+        messages.success(request, 'La structure a été supprimée avec succès!')
+        return redirect('accounts:dashboard')
+
+    return render(request, 'accounts/confirm_delete.html', {'object': structure})

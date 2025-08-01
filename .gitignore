@@ -1,0 +1,45 @@
+# Environnement virtuel
+venv/
+.env/
+.env.local
+.env*.local
+
+# Fichiers de configuration sensible
+secrets.py
+*.env
+.env
+.env.prod
+
+# Base de données (fichiers SQLite3, etc.)
+*.sqlite3
+*.db
+
+# Fichiers de cache et logs
+*.pyc
+__pycache__/
+*.log
+*.pot
+
+# Dossiers de médias et statiques (peuvent être regénérés)
+media/
+staticfiles/
+static/
+
+# Fichiers de l'IDE (VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+
+# Fichiers de dépendances Python
+*.egg-info/
+dist/
+build/
+
+# Fichiers de coverage et tests
+.coverage
+htmlcov/
+
+# Fichiers macOS
+.DS_Store
+
+# Fichiers Windows
+Thumbs.db

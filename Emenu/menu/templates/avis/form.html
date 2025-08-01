@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+{% if plat %}
+<p>Donnez votre avis sur le plat : <strong>{{ plat.nom }}</strong></p>
+{% elif menu %}
+<p>Donnez votre avis sur le menu : <strong>{{ menu.nom }}</strong></p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Publier</button>
+    {% if plat %}
+    <a href="{{ plat.get_absolute_url }}" class="btn btn-secondary">Annuler</a>
+    {% elif menu %}
+    <a href="{{ menu.get_absolute_url }}" class="btn btn-secondary">Annuler</a>
+    {% endif %}
+</form>
+{% endblock %}

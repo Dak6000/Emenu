@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="auth-card card border-0 shadow-lg">
+            <div class="card-header py-3 auth-card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-user-circle me-2"></i>Mon Profil
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <!-- Colonne photo de profil -->
+                    <div class="col-md-4">
+                        <div class="auth-card card border-0 shadow-sm mb-4">
+                            <div class="card-body text-center">
+                                {% if user.photo %}
+                                    <img src="{{ user.photo.url }}"
+                                         class="rounded-circle mb-3 profile-image"
+                                         alt="{{ user.email }}">
+                                {% else %}
+                                    <div class="rounded-circle profile-image-placeholder mb-3 d-flex align-items-center justify-content-center">
+                                        <span>{{ user.first_name|first }}{{ user.last_name|first }}</span>
+                                    </div>
+                                {% endif %}
+                                <h4 class="profile-name">{{ user.get_full_name }}</h4>
+                                <p class="profile-email">{{ user.email }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colonne informations -->
+                    <div class="col-md-8">
+                        <div class="auth-card card border-0 shadow-sm">
+                            <div class="card-header py-3 auth-card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>Informations personnelles
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-phone me-2"></i>Téléphone
+                                    </label>
+                                    <p class="form-control-static">{{ user.telephone|default:"Non renseigné" }}</p>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Adresse
+                                    </label>
+                                    <p class="form-control-static">{{ user.adresse|default:"Non renseignée" }}</p>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-city me-2"></i>Ville
+                                    </label>
+                                    <p class="form-control-static">{{ user.ville|default:"Non renseignée" }}</p>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>Retour
+                                    </a>
+                                    <a href="{% url 'accounts:password-change' %}" class="btn btn-secondary-btn">
+                                        <i class="fas fa-lock me-2"></i>Changer mot de passe
+                                    </a>
+                                    <a href="{% url 'accounts:profile-update' %}" class="btn auth-submit-btn">
+                                        <i class="fas fa-edit me-2"></i>Modifier profil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

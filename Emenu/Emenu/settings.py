@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'menu',
     'accounts',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -125,8 +127,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
+# Chemin absolu vers le dossier contenant les fichiers statiques
+# Configuration correcte :
+STATIC_URL = '/static/'
 
-STATIC_URL = 'static/'
+# Dossier où vous placez vos fichiers statiques pendant le développement
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Dossier différent pour la collecte des fichiers statiques en production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Notez le nom différent
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -142,3 +153,6 @@ LOGOUT_REDIRECT_URL = 'accounts:login'  # Redirection après déconnexion
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

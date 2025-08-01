@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="auth-card card border-0 shadow-lg">
+            <div class="card-header py-3 auth-card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-utensils me-2"></i>{{ title }}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Afficher tous les champs du formulaire avec crispy forms -->
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field|as_crispy_field }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'plat-list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn auth-submit-btn">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-card {
+        border-radius: 10px;
+    }
+    .auth-card-header {
+        background-color: var(--bs-vert);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    .auth-submit-btn {
+        background-color: var(--bs-vert);
+        color: white;
+    }
+    .auth-submit-btn:hover {
+        background-color: var(--bs-jaune);
+        color: white;
+    }
+</style>
+{% endblock %}

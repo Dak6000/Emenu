@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<div class="container mt-4">
+    <div class="auth-card card border-0 shadow-lg">
+        <div class="card-header py-3 auth-card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-list-alt me-2"></i>Liste des Menus
+                </h3>
+                <a href="{% url 'menus-create' %}" class="btn auth-submit-btn">
+                    <i class="fas fa-plus-circle me-2"></i>Créer un menu
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            {% if menus %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Statut</th>
+                            <th>Date création</th>
+                            <th>Nombre de plats</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for menu in menus %}
+                        <tr>
+                            <td>
+                                <strong>{{ menu.nom }}</strong>
+                                <div class="mt-2">
+                                    <a href="#" class="auth-link" data-bs-toggle="collapse" data-bs-target="#plats-{{ menu.id }}">
+                                        <i class="fas fa-chevron-down me-1"></i>
+                                        Voir les plats
+                                    </a>
+                                    <div class="collapse mt-2" id="plats-{{ menu.id }}">
+                                        <div class="row">
+                                            {% for plat in menu.plats.all %}
+                                            <div class="col-md-6 mb-2">
+                                                <div class="card border-0 shadow-sm">
+                                                    <div class="card-body p-3">
+                                                        <h6 class="card-title">{{ plat.nom }}</h6>
+                                                        <p class="card-text text-success mb-1">
+                                                            <i class="fas fa-tag me-2"></i>{{ plat.prix }} Fcfa
+                                                        </p>
+                                                        <small class="text-muted">
+                                                            {{ plat.categorie|default:"Aucune catégorie" }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge
+                                    {% if menu.status == 'actif' %}bg-success
+                                    {% elif menu.status == 'inactif' %}bg-secondary
+                                    {% else %}bg-info
+                                    {% endif %}">
+                                    {{ menu.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ menu.date_creation|date:"d/m/Y" }}</td>
+                            <td>{{ menu.plats.count }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'menus-update' menu.pk %}" class="btn auth-submit-btn">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'menus-delete' menu.pk %}" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+                <div class="empty-state">
+                    <i class="fas fa-utensils fa-4x text-muted mb-4"></i>
+                    <h4 class="text-muted">Aucun menu disponible</h4>
+                    <p class="text-muted mb-4">Commencez par créer votre premier menu</p>
+                    <a href="{% url 'menus-create' %}" class="btn auth-submit-btn">
+                        <i class="fas fa-plus-circle me-2"></i>Créer un menu
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(76, 175, 80, 0.05);
+    }
+    .empty-state {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.35em 0.65em;
+    }
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+    }
+</style>
+{% endblock %}

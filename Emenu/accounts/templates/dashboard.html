@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Tableau de Bord{% endblock %}
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 <div class="container-fluid">
     <!-- En-tête -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0" style="color: var(--bs-secondary)">Tableau de Bord</h1>
-        <div class="alert mb-0 p-2 border-0" style="background-color: rgba(13, 110, 253, 0.1); color: var(--bs-secondary)">
+        <h1 class="h3 mb-0 dashboard-title">Tableau de Bord</h1>
+        <div class="alert mb-0 p-2 welcome-message">
             Bienvenue, <strong>{{ user.first_name }} {{ user.last_name }}</strong> !
         </div>
     </div>
@@ -16,16 +18,15 @@
     <div class="row mb-4">
         <!-- Carte Structures -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-start h-100 py-2" style="border-left: 4px solid var(--bs-primary); box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
+            <div class="card border-start h-100 py-2 stats-card">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs fw-bold mb-1" style="color: var(--bs-primary); text-transform: uppercase">
-                                Structures enregistrées</div>
-                            <div class="h5 mb-0 fw-bold" style="color: var(--bs-gray)">{{ structures_count }}</div>
+                            <div class="text-xs fw-bold mb-1 stats-title">Structures enregistrées</div>
+                            <div class="h5 mb-0 fw-bold stats-value">{{ structures_count }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-building fa-2x" style="color: var(--bs-light)"></i>
+                            <i class="fas fa-building fa-2x stats-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -34,18 +35,17 @@
 
         <!-- Carte Dernière connexion -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-start h-100 py-2" style="border-left: 4px solid var(--bs-danger); box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
+            <div class="card border-start h-100 py-2 stats-card">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs fw-bold mb-1" style="color: var(--bs-danger); text-transform: uppercase">
-                                Dernière connexion</div>
-                            <div class="h6 mb-0 fw-bold" style="color: var(--bs-gray)">
+                            <div class="text-xs fw-bold mb-1 last-login-title">Dernière connexion</div>
+                            <div class="h6 mb-0 fw-bold stats-value">
                                 {{ user.last_login|date:"d/m/Y H:i" }}
                             </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-clock fa-2x" style="color: var(--bs-light)"></i>
+                            <i class="fas fa-clock fa-2x stats-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -54,16 +54,15 @@
 
         <!-- Nouvelle carte pour historique des connexions -->
         <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-start h-100 py-2" style="border-left: 4px solid var(--bs-secondary); box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
+            <div class="card border-start h-100 py-2 stats-card">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs fw-bold mb-1" style="color: var(--bs-secondary); text-transform: uppercase">
-                                Connexions (30j)</div>
-                            <div class="h5 mb-0 fw-bold" style="color: var(--bs-gray)">{{ login_history.count }}</div>
+                            <div class="text-xs fw-bold mb-1 login-history-title">Connexions (30j)</div>
+                            <div class="h5 mb-0 fw-bold stats-value">{{ login_history.count }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-history fa-2x" style="color: var(--bs-light)"></i>
+                            <i class="fas fa-history fa-2x stats-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -75,10 +74,10 @@
     <div class="row">
         <div class="col-lg-8 mb-4">
             <!-- Liste des structures -->
-            <div class="card mb-4" style="box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background-color: var(--bs-light)">
-                    <h6 class="m-0 fw-bold" style="color: var(--bs-primary)">Vos Structures</h6>
-                    <a href="{% url 'accounts:register_structure' %}" class="btn btn-sm" style="background-color: var(--bs-primary); color: white">
+            <div class="card mb-4 main-card">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center card-header-style">
+                    <h6 class="m-0 fw-bold card-title">Vos Structures</h6>
+                    <a href="{% url 'accounts:register_structure' %}" class="btn btn-sm add-btn">
                         <i class="fas fa-plus me-1"></i> Ajouter
                     </a>
                 </div>
@@ -86,7 +85,7 @@
                     {% if structures %}
                         <div class="table-responsive">
                             <table class="table table-hover">
-                                <thead style="background-color: var(--bs-light)">
+                                <thead class="table-header">
                                     <tr>
                                         <th>Nom</th>
                                         <th>Type</th>
@@ -101,10 +100,10 @@
                                         <td>{{ structure.get_type_display }}</td>
                                         <td>{{ structure.ville }}</td>
                                         <td>
-                                            <a href="#" class="btn btn-sm" style="border: 1px solid var(--bs-primary); color: var(--bs-primary)">
+                                            <a href="{% url 'accounts:structure-detail' structure.pk %}" class="btn btn-sm view-btn">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="#" class="btn btn-sm" style="border: 1px solid var(--bs-gray); color: var(--bs-gray)">
+                                            <a href="{% url 'accounts:structure-update' structure.pk %}" class="btn btn-sm edit-btn">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                         </td>
@@ -115,8 +114,8 @@
                         </div>
                     {% else %}
                         <div class="text-center py-4">
-                            <p style="color: var(--bs-gray)">Aucune structure enregistrée</p>
-                            <a href="{% url 'accounts:register_structure' %}" class="btn" style="background-color: var(--bs-primary); color: white">
+                            <p class="no-structure-text">Aucune structure enregistrée</p>
+                            <a href="{% url 'accounts:register_structure' %}" class="btn add-first-btn">
                                 Ajouter votre première structure
                             </a>
                         </div>
@@ -125,11 +124,11 @@
             </div>
 
             <!-- Historique des connexions -->
-            <div class="card mb-4" style="box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center" style="background-color: var(--bs-light)">
-                    <h6 class="m-0 fw-bold" style="color: var(--bs-primary)">Historique des Connexions</h6>
+            <div class="card mb-4 main-card">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center card-header-style">
+                    <h6 class="m-0 fw-bold card-title">Historique des Connexions</h6>
                     {% if login_history.count > 5 %}
-                    <button id="toggleHistory" class="btn btn-sm" style="background-color: var(--bs-primary); color: white">
+                    <button id="toggleHistory" class="btn btn-sm toggle-history-btn">
                         <i class="fas fa-eye me-1"></i> Tout afficher
                     </button>
                     {% endif %}
@@ -137,18 +136,9 @@
                 <div class="card-body">
                     <div class="list-group">
                         {% for login in login_history|slice:":5" %}
-                        <div class="list-group-item list-group-item-action {% if forloop.counter > 5 %}d-none history-item{% endif %}"
-                             style="border-left: 3px solid
-                             {% if login.action == 'LOGIN' and forloop.first %}#198754
-                             {% elif login.action == 'LOGIN' %}#0dcaf0
-                             {% elif login.action == 'LOGOUT' %}#6f42c1
-                             {% else %}#fd7e14{% endif %}">
+                        <div class="list-group-item list-group-item-action {% if forloop.counter > 5 %}d-none history-item{% endif %} login-item-{% if login.action == 'LOGIN' and forloop.first %}current{% elif login.action == 'LOGIN' %}login{% elif login.action == 'LOGOUT' %}logout{% else %}failed{% endif %}">
                             <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1" style="color:
-                                    {% if login.action == 'LOGIN' and forloop.first %}#198754
-                                    {% elif login.action == 'LOGIN' %}#0d6efd
-                                    {% elif login.action == 'LOGOUT' %}#6f42c1
-                                    {% else %}#fd7e14{% endif %}">
+                                <h6 class="mb-1 login-action">
                                     {% if login.action == 'LOGIN' %}
                                         Connexion {% if forloop.first %}(actuelle){% endif %}
                                     {% elif login.action == 'LOGOUT' %}
@@ -157,10 +147,10 @@
                                         Tentative échouée
                                     {% endif %}
                                 </h6>
-                                <small style="color: var(--bs-gray-600)">{{ login.login_time|date:"d/m/Y H:i" }}</small>
+                                <small class="login-time">{{ login.login_time|date:"d/m/Y H:i" }}</small>
                             </div>
                             <div class="d-flex w-100 justify-content-between align-items-end">
-                                <p class="mb-1" style="color: var(--bs-gray-700)">
+                                <p class="mb-1 login-details">
                                     <i class="fas fa-laptop me-1"></i> {{ login.ip_address|default:"Inconnue" }}
                                     {% if login.user_agent %}
                                     <br>
@@ -169,11 +159,11 @@
                                 </p>
                                 <div>
                                     {% if login.login_success %}
-                                    <span class="badge rounded-pill" style="background-color: #198754; color: white">
+                                    <span class="badge rounded-pill success-badge">
                                         <i class="fas fa-check-circle me-1"></i> Succès
                                     </span>
                                     {% else %}
-                                    <span class="badge rounded-pill" style="background-color: #dc3545; color: white">
+                                    <span class="badge rounded-pill failed-badge">
                                         <i class="fas fa-times-circle me-1"></i> Échec
                                     </span>
                                     {% endif %}
@@ -183,34 +173,27 @@
                         {% endfor %}
 
                         {% for login in login_history|slice:"5:" %}
-                        <div class="list-group-item list-group-item-action d-none history-item"
-                             style="border-left: 3px solid
-                             {% if login.action == 'LOGIN' %}#adb5bd
-                             {% elif login.action == 'LOGOUT' %}#6c757d
-                             {% else %}#fd7e14{% endif %}">
+                        <div class="list-group-item list-group-item-action d-none history-item login-item-{% if login.action == 'LOGIN' %}login{% elif login.action == 'LOGOUT' %}logout{% else %}failed{% endif %}">
                             <div class="d-flex w-100 justify-content-between">
-                                <h6 class="mb-1" style="color:
-                                    {% if login.action == 'LOGIN' %}#495057
-                                    {% elif login.action == 'LOGOUT' %}#343a40
-                                    {% else %}#fd7e14{% endif %}">
+                                <h6 class="mb-1 login-action">
                                     {% if login.action == 'LOGIN' %}Connexion
                                     {% elif login.action == 'LOGOUT' %}Déconnexion
                                     {% else %}Tentative échouée
                                     {% endif %}
                                 </h6>
-                                <small style="color: var(--bs-gray-600)">{{ login.login_time|date:"d/m/Y H:i" }}</small>
+                                <small class="login-time">{{ login.login_time|date:"d/m/Y H:i" }}</small>
                             </div>
                             <div class="d-flex w-100 justify-content-between align-items-end">
-                                <p class="mb-1" style="color: var(--bs-gray-700)">
+                                <p class="mb-1 login-details">
                                     <i class="fas fa-laptop me-1"></i> {{ login.ip_address|default:"Inconnue" }}
                                 </p>
                                 <div>
                                     {% if login.login_success %}
-                                    <span class="badge rounded-pill" style="background-color: #198754; color: white">
+                                    <span class="badge rounded-pill success-badge">
                                         Succès
                                     </span>
                                     {% else %}
-                                    <span class="badge rounded-pill" style="background-color: #dc3545; color: white">
+                                    <span class="badge rounded-pill failed-badge">
                                         Échec
                                     </span>
                                     {% endif %}
@@ -226,24 +209,39 @@
         <!-- Colonne droite -->
         <div class="col-lg-4 mb-4">
             <!-- Profil utilisateur -->
-            <div class="card shadow mb-4" style="box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
-                <div class="card-header py-3" style="background-color: var(--bs-light)">
-                    <h6 class="m-0 fw-bold" style="color: var(--bs-primary)">Votre Profil</h6>
+            <div class="card shadow mb-4 profile-card">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center card-header-style">
+                    <h6 class="m-0 fw-bold profile-title">Votre Profil</h6>
+                    <a href="{% url 'accounts:profile' %}" class="btn btn-sm add-btn">
+                        <i class="fas fa-eye me-1"></i> Voir le profil
+                    </a>
                 </div>
                 <div class="card-body text-center">
-                    <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=006b3f&color=fff&size=128"
-                         class="rounded-circle mb-3" width="128" height="128" alt="Avatar">
-                    <h5 class="fw-bold" style="color: var(--bs-dark)">{{ user.first_name }} {{ user.last_name }}</h5>
-                    <p style="color: var(--bs-gray); margin-bottom: 0.5rem">{{ user.email }}</p>
-                    <p style="color: var(--bs-gray)">{{ user.telephone|default:"Téléphone non renseigné" }}</p>
+                    {% if user.photo %}
+                        <img src="{{ user.photo.url }}"
+                             class="rounded-circle mb-3 profile-image"
+                             width="128"
+                             height="128"
+                             alt="Photo de profil">
+                    {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ user.first_name|urlencode }}+{{ user.last_name|urlencode }}&background=006b3f&color=fff&size=128"
+                             class="rounded-circle mb-3 profile-image"
+                             width="128"
+                             height="128"
+                             alt="Avatar">
+                    {% endif %}
 
-                    <hr style="color: var(--bs-light)">
+                    <h5 class="fw-bold user-name">{{ user.first_name }} {{ user.last_name }}</h5>
+                    <p class="user-email">{{ user.email }}</p>
+                    <p class="user-phone">{{ user.telephone|default:"Téléphone non renseigné" }}</p>
+
+                    <hr class="profile-divider">
 
                     <div class="d-flex justify-content-center gap-2">
-                        <a href="#" class="btn btn-sm" style="background-color: var(--bs-primary); color: white">
+                        <a href="{% url 'accounts:profile-update' %}" class="btn btn-sm edit-profile-btn">
                             <i class="fas fa-user-edit me-1"></i> Modifier
                         </a>
-                        <a href="{% url 'accounts:logout' %}" class="btn btn-sm" style="background-color: var(--bs-danger); color: white">
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-sm logout-btn">
                             <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
                         </a>
                     </div>
@@ -251,16 +249,16 @@
             </div>
 
             <!-- Actions rapides -->
-            <div class="card" style="box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15)">
-                <div class="card-header py-3" style="background-color: var(--bs-light)">
-                    <h6 class="m-0 fw-bold" style="color: var(--bs-primary)">Actions Rapides</h6>
+            <div class="card quick-actions-card">
+                <div class="card-header py-3 quick-actions-header">
+                    <h6 class="m-0 fw-bold quick-actions-title">Actions Rapides</h6>
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <a href="{% url 'accounts:register_structure' %}" class="btn" style="background-color: var(--bs-secondary); color: white">
+                        <a href="{% url 'accounts:register_structure' %}" class="btn new-structure-btn">
                             <i class="fas fa-plus-circle me-1"></i> Nouvelle structure
                         </a>
-                        <a href="#" class="btn" style="border: 1px solid var(--bs-primary); color: var(--bs-primary)">
+                        <a href="#" class="btn help-btn">
                             <i class="fas fa-question-circle me-1"></i> Aide
                         </a>
                     </div>

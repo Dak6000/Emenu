@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ structure.nom }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="auth-card card border-0 shadow-lg">
+            <div class="card-header py-3 auth-card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-store me-2"></i>{{ structure.nom }}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <!-- Colonne gauche - Photo et statut -->
+                    <div class="col-md-4">
+                        {% if structure.photo %}
+                            <img src="{{ structure.photo.url }}" class="img-fluid rounded mb-3" alt="Photo de la structure">
+                        {% else %}
+                            <div class="bg-light rounded mb-3 d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-store fa-4x" style="color: var(--bs-primary);"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-tags me-2"></i>Type
+                            </label>
+                            <p class="form-control-static">{{ structure.get_type_display }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-star me-2"></i>Statut
+                            </label>
+                            <span class="badge bg-{% if structure.featured %}success{% else %}secondary{% endif %}">
+                                {% if structure.featured %}Mise en avant{% else %}Standard{% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Colonne droite - Détails -->
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Adresse
+                            </label>
+                            <p class="form-control-static">{{ structure.adresse }}, {{ structure.ville }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-phone-alt me-2"></i>Téléphone
+                            </label>
+                            <p class="form-control-static">{{ structure.telephone }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-clock me-2"></i>Horaires
+                            </label>
+                            <p class="form-control-static">{{ structure.heure_ouverture|default:"Non spécifié" }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-align-left me-2"></i>Description
+                            </label>
+                            <div class="form-control-static" style="white-space: pre-line;">{{ structure.description }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour
+                    </a>
+
+                    <div>
+                        <a href="{% url 'accounts:structure-update' structure.pk %}" class="btn auth-submit-btn me-2">
+                            <i class="fas fa-edit me-2"></i>Modifier
+                        </a>
+                        <a href="{% url 'accounts:structure-delete' structure.pk %}" class="btn btn-danger-btn me-2">
+                            <i class="fas fa-trash me-2"></i>Supprimer
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

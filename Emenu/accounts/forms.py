@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
 from .models import User, Structure
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 class UserLoginForm(AuthenticationForm):
     username = forms.EmailField(
@@ -117,4 +119,53 @@ class StructureRegistrationForm(forms.ModelForm):
             'heure_ouverture': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'HH:MM - HH:MM'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Description'}),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'telephone', 'adresse', 'ville', 'photo']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
+            'telephone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Téléphone'}),
+            'adresse': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Adresse'}),
+            'ville': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ville'}),
+            'photo': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ancien mot de passe'})
+    )
+    new_password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Nouveau mot de passe'})
+    )
+    new_password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirmation du mot de passe'})
+    )
+
+class UserDeleteForm(forms.Form):
+    confirm = forms.BooleanField(
+        required=True,
+        label="Je confirme vouloir supprimer mon compte définitivement",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+
+class StructureUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Structure
+        fields = ['nom', 'telephone', 'adresse', 'ville', 'heure_ouverture', 'description', 'type', 'photo', 'featured']
+        widgets = {
+            'nom': forms.TextInput(attrs={'class': 'form-control'}),
+            'telephone': forms.TextInput(attrs={'class': 'form-control'}),
+            'adresse': forms.TextInput(attrs={'class': 'form-control'}),
+            'ville': forms.TextInput(attrs={'class': 'form-control'}),
+            'heure_ouverture': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            'photo': forms.FileInput(attrs={'class': 'form-control'}),
+            'featured': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="auth-card card border-0 shadow-lg">
+            <div class="card-header py-3 auth-card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-utensils me-2"></i>{{ title }}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Champ Nom -->
+                    <div class="mb-3">
+                        {{ form.nom|as_crispy_field }}
+                    </div>
+
+                    <!-- Champ Statut -->
+                    <div class="mb-3">
+                        {{ form.status|as_crispy_field }}
+                    </div>
+
+                    <!-- Champ Plats -->
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-list-ul me-2"></i>Plats*
+                        </label>
+                        <div class="form-check-group">
+                            {% for checkbox in form.plats %}
+                            <div class="form-check">
+                                {{ checkbox }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.plats.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.plats.errors }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'menus-list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn auth-submit-btn">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-check-group {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-left: 20px;
+        border-radius: 5px;
+    }
+    .form-check {
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+    }
+    .form-check:last-child {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}

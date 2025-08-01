@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block hero %}
+    <section class="hero-section" style="background: linear-gradient(rgba(0, 107, 63, 0.5), rgba(0, 107, 63, 0.5)), url('{% static 'images/background.jpg' %}') no-repeat center center; background-size: cover; padding: 7rem 0; color: var(--bs-jaune);">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Découvrez les meilleures tables du Togo</h1>
+            <p class="lead mb-5">Trouvez les restaurants, cafés et bars les mieux notés</p>
+
+            <!-- Search pour les recherches -->
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form class="search-form">
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg" placeholder="Rechercher un restaurant, un plat ou une ville...">
+                            <button class="btn btn-lg" type="submit" style="background-color: var(--bs-jaune); color: var(--bs-text);">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block content %}
+
+<!-- Featured Restaurants -->
+<section class="py-3">
+    <div class="container">
+        <h2 class="text-center mb-3" style="color: var(--bs-vert); font-weight: bold; font-size: 45px">Nos restaurants partenaires</h2>
+
+        <div class="row">
+            {% for structure in featured_structures|slice:":8" %}
+            <div class="col-md-3 mb-3">
+                <div class="card h-100 shadow-sm" style="background-color: var(--bs-fontSecondary);">
+                    {% if structure.photo %}
+                    <img src="{{ structure.photo.url }}" class="card-img-top" alt="{{ structure.nom }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 150px; background: var(--bs-jaune)">
+                        <i class="fas fa-utensils fa-3x text-white"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ structure.nom|default:"Nom du restaurant" }}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ structure.ville|default:"Lomé" }}
+                        </p>
+                        <p class="card-text">{{ structure.description|default:"Description du restaurant"|truncatechars:100 }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="#" class="btn btn-sm" style="background: var(--bs-jaune); color: var(--bs-rouge)">Voir le menu</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="alert" style="background: var(--bs-jaune)">
+                    Aucun restaurant disponible pour le moment. Revenez bientôt!
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="#" class="btn" style="background: var(--bs-jaune); color: var(--bs-rouge)">Voir tous les restaurants</a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-3" style="background: var(--bs-fontSecondary)">
+    <div class="container">
+        <h2 class="text-center mb-5" style="color: var(--bs-vert);">Catégories</h2>
+
+        <div class="row">
+            <div class="col-md-3 col-6 mb-4">
+                <a href="#" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center p-4"  style="background: var(--bs-font);">
+                        <i class="fas fa-hamburger fa-3x mb-3" style="color: var(--bs-vert);"></i>
+                        <h5>Fast Food</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <a href="#" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center p-4"  style="background: var(--bs-font);">
+                        <i class="fas fa-pizza-slice fa-3x mb-3" style="color: var(--bs-vert);"></i>
+                        <h5>Pizzeria</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <a href="#" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center p-4"  style="background: var(--bs-font);">
+                        <i class="fas fa-mug-hot fa-3x mb-3" style="color: var(--bs-vert);"></i>
+                        <h5>Cafés</h5>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <a href="#" class="text-decoration-none">
+                    <div class="card category-card h-100 text-center p-4"  style="background: var(--bs-font);">
+                        <i class="fas fa-cocktail fa-3x mb-3" style="color: var(--bs-vert);"></i>
+                        <h5>Bars</h5>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it Works -->
+<section class="py-3">
+    <div class="container">
+        <h2 class="text-center mb-5" style="color: var(--bs-jaune);">Comment ça marche</h2>
+
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center p-4">
+                    <div class="step-number mb-3" style="background-color: var(--bs-jaune); color: var(--bs-rouge); width: 50px; height: 50px; line-height: 50px; border-radius: 50%; margin: 0 auto;">1</div>
+                    <h4>Trouvez un restaurant</h4>
+                    <p>Recherchez par nom, type de cuisine ou localisation</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center p-4">
+                    <div class="step-number mb-3" style="background-color: var(--bs-jaune); color: var(--bs-rouge); width: 50px; height: 50px; line-height: 50px; border-radius: 50%; margin: 0 auto;">2</div>
+                    <h4>Consultez le menu</h4>
+                    <p>Découvrez les plats disponibles et leurs prix</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center p-4">
+                    <div class="step-number mb-3" style="background-color: var(--bs-jaune); color: var(--bs-rouge); width: 50px; height: 50px; line-height: 50px; border-radius: 50%; margin: 0 auto;">3</div>
+                    <h4>Commandez ou réservez</h4>
+                    <p>Faites votre choix et profitez de votre repas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-3" style="background: var(--bs-fontSecondary); color: var(--bs-vert);">
+    <div class="container text-center">
+        <h2 class="mb-4">Vous êtes un restaurant?</h2>
+        <p class="lead mb-4">Rejoignez notre plateforme et augmentez votre visibilité</p>
+        <a href="{% url 'accounts:register' %}?role=structure" class="btn btn-lg" style="background: var(--bs-jaune); color: var(--bs-rouge)">Inscrivez votre établissement</a>
+    </div>
+</section>
+{% endblock %}
