@@ -3,6 +3,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 
+from accounts.models import Structure
+
 
 class Plat(models.Model):
     CATEGORIES = (
@@ -36,6 +38,7 @@ class Menu(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='brouillon')
     plats = models.ManyToManyField('Plat', related_name='menus')
     createur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    structure = models.ForeignKey(Structure, on_delete=models.CASCADE, related_name='menus')
 
     def __str__(self):
         return self.nom

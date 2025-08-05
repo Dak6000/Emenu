@@ -106,6 +106,9 @@
                                             <a href="{% url 'accounts:structure-update' structure.pk %}" class="btn btn-sm edit-btn">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <a href="{% url 'accounts:structure-delete' structure.pk %}" class="btn btn-sm delete-btn">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                     {% endfor %}

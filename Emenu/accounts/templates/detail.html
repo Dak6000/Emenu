@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ structure.nom }}{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+
+<!-- Modal pour afficher les détails du plat -->
+<div class="modal fade" id="platModal" tabindex="-1" aria-labelledby="platModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="platModalLabel">Détails du plat</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="platModalBody">
+        <!-- Contenu dynamique sera inséré ici -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% if user.is_authenticated %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Carte pour les menus de la structure -->
+        <div class="auth-card card border-0 shadow-lg mb-4">
+        {% if has_structure %}
+            <div class="card-header py-3 auth-card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-list-alt me-2"></i>Menus de la structure
+                    </h3>
+                </div>
+            </div>
+        {% endif %}
+            <div class="card-body p-4">
+                {% if menus %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Statut</th>
+                                <th>Date création</th>
+                                <th>Nombre de plats</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for menu in menus %}
+                            <tr>
+                                <td>
+                                    <strong>{{ menu.nom }}</strong>
+                                    <div class="mt-2">
+                                        <a href="#" class="auth-link" data-bs-toggle="collapse" data-bs-target="#plats-{{ menu.id }}">
+                                            <i class="fas fa-chevron-down me-1"></i>
+                                            Voir les plats
+                                        </a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge
+                                        {% if menu.status == 'actif' %}bg-success
+                                        {% elif menu.status == 'inactif' %}bg-secondary
+                                        {% else %}bg-info
+                                        {% endif %}">
+                                        {{ menu.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ menu.date_creation|date:"d/m/Y" }}</td>
+                                <td>{{ menu.plats.count }}</td>
+                            {% if has_structure %}
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'menus-update' menu.pk %}" class="btn auth-submit-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'menus-delete' menu.pk %}" class="btn btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            {% endif %}
+                            </tr>
+                            <!-- Ligne pour les plats -->
+                            <tr class="collapse" id="plats-{{ menu.id }}">
+                                <td colspan="5" class="p-0">
+                                    <div class="container-fluid p-4 bg-light">
+                                        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+                                            {% for plat in menu.plats.all %}
+                                            <div class="col">
+                                                <div class="card h-100 border-0 shadow-sm plat-card"
+                                                     data-plat-id="{{ plat.id }}"
+                                                     data-bs-toggle="modal"
+                                                     data-bs-target="#platModal"
+                                                     onclick="showPlatDetails({{ plat.id }}, '{{ plat.nom }}', '{{ plat.description|default:"Aucune description"|escapejs }}', '{{ plat.prix }}', '{{ plat.categorie|default:"Aucune catégorie"|escapejs }}', '{% if plat.photo %}{{ plat.photo.url }}{% else %}{% static "img/default-food.jpg" %}{% endif %}')">
+                                                    <!-- Image carrée du plat -->
+                                                    <div class="square-img-container">
+                                                        {% if plat.photo %}
+                                                        <img src="{{ plat.photo.url }}" class="square-img" alt="{{ plat.nom }}">
+                                                        {% else %}
+                                                        <div class="square-img bg-secondary d-flex align-items-center justify-content-center">
+                                                            <i class="fas fa-utensils fa-3x text-white"></i>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <!-- Détails du plat -->
+                                                    <div class="card-body p-2 text-center">
+                                                        <h6 class="card-title mb-1 text-truncate">{{ plat.nom }}</h6>
+                                                        <p class="card-text text-success mb-1">
+                                                            <i class="fas fa-tag me-2"></i>{{ plat.prix }} Fcfa
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <div class="empty-state">
+                        <i class="fas fa-utensils fa-4x text-muted mb-4"></i>
+                        <h4 class="text-muted">Aucun menu disponible</h4>
+                        <p class="text-muted mb-4">Commencez par créer votre premier menu</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Carte pour les informations de la structure -->
+        <div class="auth-card card border-0 shadow-lg mb-4">
+            <div class="card-header py-3 auth-card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-store me-2"></i>{{ structure.nom }}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <!-- Colonne gauche - Photo et statut -->
+                    <div class="col-md-4">
+                        {% if structure.photo %}
+                            <img src="{{ structure.photo.url }}" class="img-fluid rounded mb-3" alt="Photo de la structure">
+                        {% else %}
+                            <div class="bg-light rounded mb-3 d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-store fa-4x" style="color: var(--bs-primary);"></i>
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-tags me-2"></i>Type
+                            </label>
+                            <p class="form-control-static">{{ structure.get_type_display }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-star me-2"></i>Statut
+                            </label>
+                            <span class="badge bg-{% if structure.featured %}success{% else %}secondary{% endif %}">
+                                {% if structure.featured %}Mise en avant{% else %}Standard{% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Colonne droite - Détails -->
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-map-marker-alt me-2"></i>Adresse
+                            </label>
+                            <p class="form-control-static">{{ structure.adresse }}, {{ structure.ville }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-phone-alt me-2"></i>Téléphone
+                            </label>
+                            <p class="form-control-static">{{ structure.telephone }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-clock me-2"></i>Horaires
+                            </label>
+                            <p class="form-control-static">{{ structure.heure_ouverture|default:"Non spécifié" }}</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-align-left me-2"></i>Description
+                            </label>
+                            <div class="form-control-static" style="white-space: pre-line;">{{ structure.description }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'accounts:structure' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Retour
+                    </a>
+                {% if has_structure %}
+                    <div>
+                        <a href="{% url 'plat-create' %}" class="btn auth-submit-btn me-2">
+                            <i class="fas fa-utensils me-2"></i>Plats
+                        </a>
+                        <a href="{% url 'menus-create' %}" class="btn auth-submit-btn me-2">
+                            <i class="fas fa-utensils me-2"></i>Menu
+                        </a>
+                        <a href="{% url 'accounts:structure-update' structure.pk %}" class="btn auth-submit-btn me-2">
+                            <i class="fas fa-edit me-2"></i>Modifier
+                        </a>
+                        <a href="{% url 'accounts:structure-delete' structure.pk %}" class="btn btn-danger-btn me-2">
+                            <i class="fas fa-trash me-2"></i>Supprimer
+                        </a>
+                    </div>
+                {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endif %}
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: rgba(76, 175, 80, 0.05);
+    }
+    .empty-state {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.35em 0.65em;
+    }
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+    }
+    /* Animation pour l'affichage des plats */
+    .collapse.show {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    /* Style pour les images carrées */
+    .square-img-container {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+        overflow: hidden;
+    }
+    .square-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .plat-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .plat-card:hover {
+        transform: translateY(-5px);
+    }
+    /* Style pour la modal */
+    .modal-img {
+        max-height: 300px;
+        object-fit: cover;
+        width: 100%;
+        border-radius: 5px;
+    }
+</style>
+
+<script>
+    function showPlatDetails(id, nom, description, prix, categorie, imageUrl) {
+        document.getElementById('platModalLabel').textContent = nom;
+
+        const modalBody = document.getElementById('platModalBody');
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <img src="${imageUrl}" alt="${nom}" class="modal-img">
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Description:</strong> ${description}</p>
+                    <p><strong>Prix:</strong> <span class="text-success">${prix} Fcfa</span></p>
+                    <p><strong>Catégorie:</strong> ${categorie}</p>
+                    <p><strong>Ingrédients:</strong> <span class="text-muted">À compléter</span></p>
+                </div>
+            </div>
+        `;
+    }
+</script>
+{% endblock %}

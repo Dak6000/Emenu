@@ -27,6 +27,7 @@ urlpatterns = [
 
     # URLs de gestion des structures
     path('structure_detail/<int:pk>/', views.structure_detail, name='structure-detail'),
+    path('detail/<int:pk>/', views.detail, name='detail'),
     path('structure_form/<int:pk>/', views.structure_update, name='structure-update'),
     path('account_delete/<int:pk>/', views.structure_delete, name='structure-delete'),
 

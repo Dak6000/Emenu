@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mon Application{% endblock %}</title>
+    <title>{% block title %}E-Menu Togo{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Navigation-->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg main-navbar fixed-top navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'accounts:home' %}">
@@ -32,33 +32,35 @@
                     </li>
 
                     {% if user.is_authenticated %}
-                        <!-- Menu déroulant pour les plats (visible si l'utilisateur a une structure) -->
-                        {% if user.structure %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="platsDropdown" role="button" data-bs-toggle="dropdown">
-                                Plats
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="platsDropdown">
-                                <li><a class="dropdown-item" href="{% url 'plat-list' %}">Mes plats</a></li>
-                                <li><a class="dropdown-item" href="{% url 'plat-create' %}">Créer un plat</a></li>
-                            </ul>
-                        </li>
-                        {% endif %}
+                        <!-- Utilisation de la même vérification que pour la redirection -->
 
-                        <!-- Menu déroulant pour les menus (visible si l'utilisateur a une structure) -->
-                        {% if user.structure %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="menusDropdown" role="button" data-bs-toggle="dropdown">
-                                Menus
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="menusDropdown">
-                                <li><a class="dropdown-item" href="{% url 'menus-list' %}">Mes menus</a></li>
-                                <li><a class="dropdown-item" href="{% url 'menus-create' %}">Créer un menu</a></li>
-                            </ul>
-                        </li>
-                        {% endif %}
+                            <!-- Menu déroulant pour les plats -->
+                            {% if has_structure %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="platsDropdown" role="button" data-bs-toggle="dropdown">
+                                    Plats
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="platsDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'plat-list' %}">Mes plats</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'plat-create' %}">Créer un plat</a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
 
-                        <!-- Lien pour les avis (accessible à tous) -->
+                            <!-- Menu déroulant pour les menus -->
+                            {% if has_structure %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="menusDropdown" role="button" data-bs-toggle="dropdown">
+                                    Menus
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="menusDropdown">
+                                    <li><a class="dropdown-item" href="{% url 'menus-list' %}">Mes menus</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'menus-create' %}">Créer un menu</a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
+
+                        <!-- Lien pour les avis -->
                         <li class="nav-item">
                             <a class="nav-link" href="#">Avis</a>
                         </li>

@@ -67,14 +67,19 @@ def menu_create(request):
         if form.is_valid():
             menu = form.save(commit=False)
             menu.createur = request.user
+            # Associer automatiquement à la structure de l'utilisateur
+            menu.structure = request.user.structure.first()
             menu.save()
             form.save_m2m()  # Pour sauvegarder les relations many-to-many
             messages.success(request, 'Menu créé avec succès!')
             return redirect('menus-list')
     else:
         form = MenuForm(user=request.user)
-    return render(request, 'menus/form.html', {'form': form, 'title': 'Créer un menus'})
 
+    return render(request, 'menus/form.html', {
+        'form': form,
+        'title': 'Créer un menu'
+    })
 
 @login_required
 def menu_update(request, pk):

@@ -2,15 +2,10 @@
 {% load static %}
 {% block title %}Structures - {{ block.super }}{% endblock %}
 
-{% block content %}
 <!-- Hero Section -->
-<section class="py-5" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{% static 'images/restaurant-bg.jpg' %}'); background-size: cover; background-position: center;">
-    <div class="container py-5 text-white text-center">
-        <h1 class="display-4 fw-bold mb-4">Découvrez nos structures partenaires</h1>
-        <p class="lead mb-4">Explorez une sélection de restaurants et établissements de qualité</p>
-        <a href="#structures" class="btn btn-primary btn-lg px-4">Voir les structures</a>
-    </div>
-</section>
+
+{% block content %}
+
 
 <!-- Structures Listing -->
 <section id="structures" class="py-5">
@@ -43,60 +38,50 @@
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row">
             {% for structure in featured_structures %}
-            <div class="col-lg-3 col-md-4 col-sm-6 structure-card"
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-3 structure-card"
                  data-ville="{{ structure.ville|lower }}"
                  data-categorie="{{ structure.categorie.nom|lower }}"
                  data-nom="{{ structure.nom|lower }}">
-                <div class="card h-100 border-0 shadow-sm hover-effect">
+                <div class="card h-100 shadow-sm" style="background-color: var(--bs-fontSecondary);">
                     <div class="position-relative">
                         {% if structure.photo %}
                         <img src="{{ structure.photo.url }}" class="card-img-top" alt="{{ structure.nom }}" style="height: 200px; object-fit: cover;">
                         {% else %}
-                        <div class="card-img-top d-flex align-items-center justify-content-center bg-secondary" style="height: 200px;">
-                            <i class="fas fa-utensils fa-4x text-white"></i>
+                        <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 150px; background: var(--bs-jaune)">
+                            <i class="fas fa-utensils fa-3x text-white"></i>
                         </div>
                         {% endif %}
-                        <div class="badge bg-primary position-absolute" style="top: 10px; right: 10px;">
+                        <div class="badge position-absolute" style="top: 10px; right: 10px; background: var(--bs-jaune); color: var(--bs-rouge)">
                             {{ structure.categorie.nom }}
                         </div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">{{ structure.nom }}</h5>
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                            <span class="text-muted">{{ structure.ville }}</span>
-                        </div>
-                        <p class="card-text">{{ structure.description|truncatechars:100 }}</p>
+                        <h5 class="card-title">{{ structure.nom|default:"Nom du restaurant" }}</h5>
+                        <p class="card-text text-muted">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ structure.ville|default:"Lomé" }}
+                        </p>
+                        <p class="card-text">{{ structure.description|default:"Description du restaurant"|truncatechars:100 }}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                {% if structure.note_moyenne %}
-                                <span class="badge bg-warning text-dark">
-                                    <i class="fas fa-star"></i> {{ structure.note_moyenne|floatformat:1 }}
-                                </span>
-                                {% endif %}
-                            </div>
-                            <div>
-                                {% if structure.est_ouvert %}
-                                <span class="badge bg-success">Ouvert</span>
-                                {% else %}
-                                <span class="badge bg-danger">Fermé</span>
-                                {% endif %}
-                            </div>
+                            {% if structure.note_moyenne %}
+                            <span class="badge" style="background: var(--bs-jaune); color: var(--bs-rouge)">
+                                <i class="fas fa-star"></i> {{ structure.note_moyenne|floatformat:1 }}
+                            </span>
+                            {% endif %}
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent border-0">
-                        <a href="{% url 'accounts:structure-detail' structure.pk %}" class="btn btn-primary w-100">
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'accounts:detail' structure.pk %}" class="btn btn-sm" style="background: var(--bs-jaune); color: var(--bs-rouge)">
                             <i class="fas fa-eye me-2"></i> Voir détails
                         </a>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle me-2"></i> Aucune structure disponible pour le moment.
+            <div class="col-12 text-center">
+                <div class="alert" style="background: var(--bs-jaune)">
+                    <i class="fas fa-info-circle me-2"></i> Aucun restaurant disponible pour le moment. Revenez bientôt!
                 </div>
             </div>
             {% endfor %}
